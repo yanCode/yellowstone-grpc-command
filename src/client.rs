@@ -1,16 +1,17 @@
-use anyhow::Ok;
+use anyhow::Result;
 use backoff::{ExponentialBackoff, future::retry};
-use clap::{Parser, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum};
 use dotenv::dotenv;
+use log::{error, info};
 use std::{env, sync::Arc};
 use tokio::sync::Mutex;
+use yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcClient, Interceptor};
 use yellowstone_grpc_proto::geyser::CommitmentLevel;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Load .env file if it exists
     dotenv().ok();
-
     env_logger::init();
 
     let args = Args::parse();
@@ -25,8 +26,22 @@ async fn main() -> anyhow::Result<()> {
     //     async move || Ok(())
     // })
     // .await;
-    let commitment = args.get_commitment();
-    println!("commitment: {:?}", commitment);
+    let _commitment = args.get_commitment();
+    let mut client = args.connect().await?;
+    info!("Connected...");
+    match &args.action {
+        Action::GetVersion => {
+            let version = client.get_version().await?;
+            info!("Version: {}", version.version);
+        }
+        Action::HealthCheck => {
+            let health = client.health_check().await?;
+            info!("Health: {:?}", health);
+        }
+        _ => {
+            unimplemented!()
+        }
+    }
     Ok(())
 }
 
@@ -40,7 +55,7 @@ enum ArgsCommitment {
 
 #[derive(Debug, Clone, Parser)]
 #[clap(
-    author = "yuki@yuki0327.com",
+    author = "todo",
     version = "0.1.0",
     about = "command line tool for Yellowstone gRPC"
 )]
@@ -54,10 +69,27 @@ struct Args {
     /// Commitment level: processed, confirmed or finalized
     #[clap(long)]
     commitment: Option<ArgsCommitment>,
+    #[clap(subcommand)]
+    action: Action,
 }
 impl Args {
     fn get_commitment(&self) -> Option<CommitmentLevel> {
         self.commitment.map(|c| c.into())
+    }
+
+    async fn connect(&self) -> Result<GeyserGrpcClient<impl Interceptor>> {
+        let tls_config = ClientTlsConfig::new().with_native_roots();
+        let endpoint = self
+            .endpoint
+            .clone()
+            .unwrap_or(env::var("GRPC_ENDPOINT").unwrap());
+        println!("endpoint: {}", endpoint);
+        let builder = GeyserGrpcClient::build_from_shared(endpoint)?.tls_config(tls_config)?;
+
+        builder
+            .connect()
+            .await
+            .map_err(|e| anyhow::anyhow!("failed to connect: {}", e))
     }
 }
 impl From<ArgsCommitment> for CommitmentLevel {
@@ -68,4 +100,15 @@ impl From<ArgsCommitment> for CommitmentLevel {
             ArgsCommitment::Finalized => CommitmentLevel::Finalized,
         }
     }
+}
+
+#[derive(Debug, Clone, Subcommand)]
+enum Action {
+    GetVersion,
+    HealthCheck,
+    HealthWatch,
+    Ping {
+        #[clap(long, short, default_value_t = 0)]
+        count: i32,
+    },
 }
