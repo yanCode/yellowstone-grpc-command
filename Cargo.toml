@@ -5,7 +5,6 @@ name = "yellowstone-grpc-command"
 version = "0.1.0"
 [[bin]]
 name = "client"
-path = "src/client.rs"
 
 [dependencies]
 anyhow = "1.0.97"

@@ -1,12 +1,10 @@
-mod args;
-
-use args::{Action, Args};
 use backoff::{ExponentialBackoff, future::retry};
 use clap::Parser;
 use dotenv::dotenv;
 use log::info;
-use std::{env, sync::Arc};
+use std::sync::Arc;
 use tokio::sync::Mutex;
+use yellowstone_grpc_command::args::{Action, Args};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -38,7 +36,12 @@ async fn main() -> anyhow::Result<()> {
                     .get_version()
                     .await
                     .map_err(anyhow::Error::new)
-                    .map(|response| info!("response: {response:?}")),
+                    .map(|response| info!("version response: {response:?}")),
+                Action::Ping { count } => client
+                    .ping(*count)
+                    .await
+                    .map_err(anyhow::Error::new)
+                    .map(|response| info!("ping response: {response:?}")),
                 _ => {
                     unimplemented!()
                 }
