@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
+use dotenv::dotenv;
 use futures::{SinkExt, StreamExt};
 use log::info;
 use tokio::time::interval;
@@ -15,7 +16,7 @@ use yellowstone_grpc_proto::geyser::{
 #[clap(author, version, about)]
 struct Args {
     /// Service endpoint
-    #[clap(short, long, default_value_t = String::from("http://127.0.0.1:10000"))]
+    #[clap(short, long)]
     endpoint: String,
 
     #[clap(long)]
@@ -23,6 +24,7 @@ struct Args {
 }
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    dotenv().ok();
     let args = Args::parse();
     let mut client = GeyserGrpcClient::build_from_shared(args.endpoint)?
         .tls_config(ClientTlsConfig::new().with_native_roots())?
