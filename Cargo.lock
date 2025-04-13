@@ -5560,6 +5560,7 @@ dependencies = [
  "futures",
  "log",
  "maplit",
+ "serde_json",
  "solana-sdk",
  "solana-transaction-status",
  "tokio",

@@ -4,7 +4,7 @@ use dotenv::dotenv;
 use log::info;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use yellowstone_grpc_command::args::{Action, Args};
+use yellowstone_grpc_command::args::{Action, Args, pretty_print_json};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -35,13 +35,13 @@ async fn main() -> anyhow::Result<()> {
                 Action::GetVersion => client
                     .get_version()
                     .await
-                    .map_err(anyhow::Error::new)
-                    .map(|response| info!("version response: {response:?}")),
+                    .map_err(anyhow::Error::from)
+                    .and_then(|response| pretty_print_json(&response.version, "Version response")),
                 Action::Ping { count } => client
                     .ping(*count)
                     .await
                     .map_err(anyhow::Error::new)
-                    .map(|response| info!("ping response: {response:?}")),
+                    .map(|response| info!("Ping response: {response:?}")),
                 _ => {
                     unimplemented!()
                 }

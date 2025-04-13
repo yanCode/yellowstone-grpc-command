@@ -72,3 +72,9 @@ pub enum Action {
         count: i32,
     },
 }
+
+pub fn pretty_print_json(input: &str, prefix: &str) -> Result<()> {
+    let s: serde_json::Value = serde_json::from_str(input)?;
+    println!("{}: {}", prefix, serde_json::to_string_pretty(&s)?);
+    Ok(())
+}
