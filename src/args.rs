@@ -1,5 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
+use futures::StreamExt;
+use log::info;
 use std::env;
 use yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcClient, Interceptor};
 use yellowstone_grpc_proto::geyser::CommitmentLevel;
@@ -83,5 +85,15 @@ pub enum Action {
 pub fn pretty_print_json(input: &str, prefix: &str) -> Result<()> {
     let s: serde_json::Value = serde_json::from_str(input)?;
     println!("{}: {}", prefix, serde_json::to_string_pretty(&s)?);
+    Ok(())
+}
+
+pub async fn greyser_health_watch(client: &mut GeyserGrpcClient<impl Interceptor>) -> Result<()> {
+    let mut stream = client.health_watch().await?;
+    info!("health_watch stream started...");
+    while let Some(health) = stream.next().await {
+        info!("health message: {:?}", health);
+    }
+    info!("health_watch stream ended...");
     Ok(())
 }

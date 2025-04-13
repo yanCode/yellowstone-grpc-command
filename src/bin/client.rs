@@ -4,7 +4,7 @@ use dotenv::dotenv;
 use log::info;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use yellowstone_grpc_command::args::{Action, Args, pretty_print_json};
+use yellowstone_grpc_command::args::{Action, Args, greyser_health_watch, pretty_print_json};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -42,6 +42,7 @@ async fn main() -> anyhow::Result<()> {
                     .await
                     .map_err(anyhow::Error::new)
                     .map(|response| info!("Ping response: {response:#?}")),
+                Action::HealthWatch => greyser_health_watch(&mut client).await,
                 Action::HealthCheck => client
                     .health_check()
                     .await
@@ -68,9 +69,9 @@ async fn main() -> anyhow::Result<()> {
                     .await
                     .map_err(anyhow::Error::new)
                     .map(|response| info!("response: {response:?}")),
-                _ => {
-                    unimplemented!()
-                }
+                // _ => {
+                //     unimplemented!()
+                // }
             }
             .map_err(backoff::Error::transient)?;
             Ok::<(), backoff::Error<anyhow::Error>>(())
