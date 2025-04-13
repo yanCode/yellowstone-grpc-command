@@ -28,7 +28,7 @@ async fn main() -> anyhow::Result<()> {
                 info!("Retry to connect to the server");
             }
             drop(zero_attempts);
-            let _commitment = args.get_commitment();
+            let commitment = args.get_commitment();
             let mut client = args.connect().await.map_err(backoff::Error::transient)?;
             info!("Connected");
             match &args.action {
@@ -41,7 +41,33 @@ async fn main() -> anyhow::Result<()> {
                     .ping(*count)
                     .await
                     .map_err(anyhow::Error::new)
-                    .map(|response| info!("Ping response: {response:?}")),
+                    .map(|response| info!("Ping response: {response:#?}")),
+                Action::HealthCheck => client
+                    .health_check()
+                    .await
+                    .map_err(anyhow::Error::from)
+                    .map(|response| info!("Health check response: {response:?}")),
+                Action::GetLatestBlockhash => client
+                    .get_latest_blockhash(commitment)
+                    .await
+                    .map_err(anyhow::Error::new)
+                    .map(|response| info!("latest_blockhash: {response:#?}")),
+                Action::GetSlot => client
+                    .get_slot(commitment)
+                    .await
+                    .map_err(anyhow::Error::new)
+                    .map(|response| info!("slot: {response:#?}")),
+                Action::GetBlockHeight => client
+                    .get_block_height(commitment)
+                    .await
+                    .map_err(anyhow::Error::new)
+                    .map(|response| info!("block_height: {response:#?}")),
+
+                Action::IsBlockhashValid { blockhash } => client
+                    .is_blockhash_valid(blockhash.clone(), commitment)
+                    .await
+                    .map_err(anyhow::Error::new)
+                    .map(|response| info!("response: {response:?}")),
                 _ => {
                     unimplemented!()
                 }

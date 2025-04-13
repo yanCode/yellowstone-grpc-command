@@ -71,6 +71,13 @@ pub enum Action {
         #[clap(long, short, default_value_t = 0)]
         count: i32,
     },
+    GetLatestBlockhash,
+    GetBlockHeight,
+    GetSlot,
+    IsBlockhashValid {
+        #[clap(long, short)]
+        blockhash: String,
+    },
 }
 
 pub fn pretty_print_json(input: &str, prefix: &str) -> Result<()> {
