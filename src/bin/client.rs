@@ -69,9 +69,9 @@ async fn main() -> anyhow::Result<()> {
                     .await
                     .map_err(anyhow::Error::new)
                     .map(|response| info!("response: {response:?}")),
-                // _ => {
-                //     unimplemented!()
-                // }
+                _ => {
+                    unimplemented!()
+                }
             }
             .map_err(backoff::Error::transient)?;
             Ok::<(), backoff::Error<anyhow::Error>>(())

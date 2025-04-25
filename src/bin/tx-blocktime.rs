@@ -67,10 +67,9 @@ async fn main() -> anyhow::Result<()> {
 
     subscribe_tx
         .send(SubscribeRequest {
-            //todo why send has sink trait?
-            slots: HashMap::new(),
-            accounts: HashMap::new(),
-            transactions: HashMap::new(),
+            // slots: HashMap::new(),
+            // accounts: HashMap::new(),
+            // transactions: HashMap::new(),
             transactions_status: hashmap! { "".to_owned() => SubscribeRequestFilterTransactions {
                 vote: args.vote,
                 failed: args.failed,
@@ -79,13 +78,14 @@ async fn main() -> anyhow::Result<()> {
                 account_exclude: args.account_exclude,
                 account_required: args.account_required,
             } },
-            entry: HashMap::new(),
-            blocks: HashMap::new(),
-            blocks_meta: hashmap! { "".to_owned() => SubscribeRequestFilterBlocksMeta {} },
-            commitment: Some(commitment as i32),
-            accounts_data_slice: vec![],
-            ping: None,
-            from_slot: None,
+            ..Default::default()
+            // entry: HashMap::new(),
+            // blocks: HashMap::new(),
+            // blocks_meta: hashmap! { "".to_owned() => SubscribeRequestFilterBlocksMeta {} },
+            // commitment: Some(commitment as i32),
+            // accounts_data_slice: vec![],
+            // ping: None,
+            // from_slot: None,
         })
         .await?;
     let mut messages: BTreeMap<u64, (Option<DateTime<Utc>>, Vec<String>)> = BTreeMap::new();

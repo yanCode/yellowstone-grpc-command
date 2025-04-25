@@ -2,9 +2,13 @@ use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
 use futures::StreamExt;
 use log::info;
-use std::env;
+use std::{collections::HashMap, env};
 use yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcClient, Interceptor};
-use yellowstone_grpc_proto::geyser::CommitmentLevel;
+use yellowstone_grpc_proto::geyser::{
+    CommitmentLevel, SubscribeRequest, SubscribeRequestFilterAccounts,
+};
+
+type AccountFilterMap = HashMap<String, SubscribeRequestFilterAccounts>;
 
 #[derive(Debug, Clone, Parser)]
 #[clap(
@@ -32,10 +36,10 @@ impl Args {
 
     pub async fn connect(&self) -> Result<GeyserGrpcClient<impl Interceptor>> {
         let tls_config = ClientTlsConfig::new().with_native_roots();
-        let endpoint = self
-            .endpoint
-            .clone()
-            .unwrap_or(env::var("GRPC_ENDPOINT").unwrap());
+        let endpoint = match &self.endpoint {
+            Some(endpoint) => endpoint.clone(),
+            None => env::var("GRPC_ENDPOINT").unwrap(),
+        };
         println!("endpoint: {}", endpoint);
         let builder = GeyserGrpcClient::build_from_shared(endpoint)?.tls_config(tls_config)?;
 
@@ -69,6 +73,7 @@ pub enum Action {
     GetVersion,
     HealthCheck,
     HealthWatch,
+    Subscribe(Box<ActionSubscribe>),
     Ping {
         #[clap(long, short, default_value_t = 0)]
         count: i32,
@@ -80,6 +85,58 @@ pub enum Action {
         #[clap(long, short)]
         blockhash: String,
     },
+}
+impl Action {
+    async fn get_subscribe_requrest(
+        &self,
+        commitment: Option<CommitmentLevel>,
+    ) -> Result<Option<SubscribeRequest>> {
+        let result = match self {
+            Action::Subscribe(args) => {
+                let mut accounts: AccountFilterMap = AccountFilterMap::default();
+                unimplemented!()
+            }
+            _ => None,
+        };
+        Ok(result)
+    }
+}
+
+#[derive(Debug, Clone, clap::Args)]
+struct ActionSubscribe {
+    /// Subscribe on accounts updates
+    #[clap(long)]
+    accounts: bool,
+    /// Filter by presence of field txn_signature
+    accounts_nonempty_txn_signature: Option<bool>,
+    /// Filter by Account Pubkey
+    #[clap(long)]
+    accounts_account: Vec<String>,
+    /// Path to a JSON array of account addresses
+    #[clap(long)]
+    accounts_account_path: Option<String>,
+    /// Filter by Owner Pubkey
+    #[clap(long)]
+    accounts_owner: Vec<String>,
+    /// Filter by Offset and Data, format: `offset,data in base58`
+    #[clap(long)]
+    accounts_memcmp: Vec<String>,
+    /// Filter by Data size
+    #[clap(long)]
+    accounts_datasize: Option<u64>,
+    /// Filter valid token accounts
+    #[clap(long)]
+    accounts_token_account_state: bool,
+
+    /// Filter by lamports, format: `eq:42` / `ne:42` / `lt:42` / `gt:42`
+    #[clap(long)]
+    accounts_lamports: Vec<String>,
+    /// Receive only part of updated data account, format: `offset,size`
+    #[clap(long)]
+    accounts_data_slice: Vec<String>,
+    /// Subscribe on slots updates
+    #[clap(long)]
+    slots: bool,
 }
 
 pub fn pretty_print_json(input: &str, prefix: &str) -> Result<()> {
