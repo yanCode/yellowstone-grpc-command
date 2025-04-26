@@ -1,32 +1,20 @@
-use clap::{Command, Parser, Subcommand};
-pub mod args;
+mod args;
+use anyhow::Result;
+use args::{Args, Commands};
+use clap::Parser;
+use dotenv::dotenv;
 
-// Add more module declarations here as needed
-fn main() {
+#[tokio::main]
+async fn main() -> Result<()> {
+    dotenv().ok();
+    env_logger::init();
     let args = Args::parse();
-    match args.command {
-        Commands::ServerVersion => {
-            println!("Server version: {:?}", args.endpoint);
-        }
-        Commands::HealthCheck => {
-            println!("Health check: {:?}", args.endpoint);
-        }
+    let mut client = args.connect().await?;
+
+    match &args.command {
+        Commands::ServerVersion => args.server_version(&mut client).await?,
+        Commands::HealthCheck => args.greyser_health_watch(&mut client).await?,
+        Commands::LatestBlockhash => args.get_latest_blockhash(&mut client).await?,
     }
-}
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[clap(short, long)]
-    endpoint: Option<String>,
-
-    #[clap(short, long, default_value = "processed")]
-    commitment: Option<String>,
-    #[command(subcommand)]
-    command: Commands,
-}
-
-#[derive(Subcommand)]
-enum Commands {
-    ServerVersion,
-    HealthCheck,
+    Ok(())
 }
