@@ -1,9 +1,10 @@
 // Add more module declarations here as needed
 
+mod subscribe_tx;
 mod utils;
 use clap::{Parser, Subcommand};
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     #[clap(short, long)]
@@ -15,9 +16,10 @@ pub struct Args {
     pub command: Commands,
 }
 
-#[derive(Subcommand, Debug)]
+#[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
     ServerVersion,
     HealthCheck,
     LatestBlockhash,
+    SubscribeTx,
 }

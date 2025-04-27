@@ -9,13 +9,14 @@ use yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcClient, Interceptor};
 use yellowstone_grpc_proto::geyser::CommitmentLevel;
 
 impl Args {
-    pub async fn connect(&self) -> Result<GeyserGrpcClient<impl Interceptor>> {
+    pub async fn connect(self) -> Result<GeyserGrpcClient<impl Interceptor>> {
         let tls_config = ClientTlsConfig::new().with_native_roots();
         let endpoint = match &self.endpoint {
             Some(endpoint) => endpoint.clone(),
             None => env::var("GRPC_ENDPOINT").unwrap(),
         };
-        let builder = GeyserGrpcClient::build_from_shared(endpoint)?.tls_config(tls_config)?;
+        let builder =
+            GeyserGrpcClient::build_from_shared(endpoint.clone())?.tls_config(tls_config)?;
 
         builder
             .connect()

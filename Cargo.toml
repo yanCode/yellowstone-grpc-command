@@ -4,8 +4,7 @@ edition = "2024"
 name = "yellowstone-grpc-command"
 version = "0.1.0"
 default-run = "yellowstone-grpc-command"
-[[bin]]
-name = "client"
+
 
 [dependencies]
 anyhow = "1.0.97"
