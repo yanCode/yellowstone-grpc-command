@@ -8,7 +8,7 @@ use dotenv::dotenv;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    dotenv().ok();
+    dotenv().expect(".env file must be present!");
     env_logger::init();
     let args = Args::parse();
     let mut client = args.clone().connect().await?;
@@ -18,6 +18,7 @@ async fn main() -> Result<()> {
         Commands::HealthCheck => args.greyser_health_watch(&mut client).await?,
         Commands::LatestBlockhash => args.get_latest_blockhash(&mut client).await?,
         Commands::SubscribeTx => args.subscribe_tx().await?,
+        Commands::SubscribeTokenPrice => args.subscribe_token_price().await?,
     }
     Ok(())
 }

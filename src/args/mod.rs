@@ -1,6 +1,7 @@
 // Add more module declarations here as needed
 
 mod subscribe_tx;
+mod subscribe_token_price;
 mod utils;
 use clap::{Parser, Subcommand};
 
@@ -22,4 +23,5 @@ pub enum Commands {
     HealthCheck,
     LatestBlockhash,
     SubscribeTx,
+    SubscribeTokenPrice
 }
