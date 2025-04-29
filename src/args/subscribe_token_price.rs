@@ -12,13 +12,13 @@ use yellowstone_grpc_proto::geyser::{
 };
 
 impl Args {
-    pub async fn subscribe_token_price(&self) -> Result<()> {
+    pub async fn subscribe_token_price(&self, account: String) -> Result<()> {
         let mut client = self.clone().connect().await?;
         let subscribe_request = SubscribeRequest {
             accounts: HashMap::from([(
                 "client".to_string(),
                 SubscribeRequestFilterAccounts {
-                    account: vec!["8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj".to_string()],
+                    account: vec![account],
                     owner: vec!["CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK".to_string()],
                     ..Default::default()
                 },

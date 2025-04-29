@@ -17,12 +17,16 @@ use crate::helper::TransactionPretty;
 use super::Args;
 
 impl Args {
-    pub async fn subscribe_tx(&self) -> Result<()> {
-        let addrs = vec!["6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P".to_string()];
+    pub async fn subscribe_tx(&self, account_include: Vec<String>) -> Result<()> {
+        debug!(
+            "Subscribing to transactions for accounts: {:?}",
+            &account_include
+        );
+
         let transactions: HashMap<String, SubscribeRequestFilterTransactions> = HashMap::from([(
             "client".to_string(),
             SubscribeRequestFilterTransactions {
-                account_include: addrs,
+                account_include,
                 ..Default::default()
             },
         )]);
@@ -40,7 +44,7 @@ impl Args {
             .await?;
         let (tx, mut rx) = mpsc::channel::<TransactionPretty>(100);
 
-        debug!("Subscribed to transactions...");
+        debug!("Subscribed to transactions successfully");
 
         tokio::spawn(async move {
             while let Some(message) = stream.next().await {

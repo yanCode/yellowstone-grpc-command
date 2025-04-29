@@ -23,7 +23,25 @@ pub enum Commands {
     ServerVersion,
     HealthCheck,
     LatestBlockhash,
-    SubscribeTx,
-    SubscribeTokenPrice,
-    SubscribeAccount,
+    SubscribeTx(SubscribeTxArgs),
+    SubscribeTokenPrice(SubscribeTokenPriceArgs),
+    SubscribeAccount(SubscribeAccountArgs),
+}
+
+#[derive(Parser, Debug, Clone)]
+pub struct SubscribeTxArgs {
+    #[clap(short, long, required = true, num_args = 1.., value_delimiter = ',')]
+    pub accounts: Vec<String>,
+}
+
+#[derive(Parser, Debug, Clone)]
+pub struct SubscribeTokenPriceArgs {
+    #[clap(short, long, required = true)]
+    pub account: String,
+}
+
+#[derive(Parser, Debug, Clone)]
+pub struct SubscribeAccountArgs {
+    #[clap(short, long, required = true)]
+    pub account: String,
 }

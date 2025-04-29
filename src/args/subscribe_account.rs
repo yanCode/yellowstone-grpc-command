@@ -13,14 +13,13 @@ use yellowstone_grpc_proto::geyser::{
 use super::Args;
 
 impl Args {
-    pub async fn subscribe_account(&self) -> Result<()> {
-        let addrs = vec!["53gas6nwoz3GjbdbmiZ5ywLdfnhqUQNEKvF5ErpXUc3S".to_string()];
+    pub async fn subscribe_account(&self, account: String) -> Result<()> {
         let mut client = self.clone().connect().await?;
         let subscribe_request = SubscribeRequest {
             accounts: HashMap::from([(
                 "client".to_string(),
                 SubscribeRequestFilterAccounts {
-                    account: addrs,
+                    account: vec![account],
                     ..Default::default()
                 },
             )]),
@@ -37,7 +36,7 @@ impl Args {
                     Some(UpdateOneof::Account(account)) => {
                         parse_account(&account)?;
                     }
-                    Some(UpdateOneof::Ping(ping)) => {
+                    Some(UpdateOneof::Ping(_)) => {
                         debug!("service is pinging..");
                         sbuscribe_tx
                             .send(SubscribeRequest {

@@ -17,9 +17,17 @@ async fn main() -> Result<()> {
         Commands::ServerVersion => args.server_version(&mut client).await?,
         Commands::HealthCheck => args.greyser_health_watch(&mut client).await?,
         Commands::LatestBlockhash => args.get_latest_blockhash(&mut client).await?,
-        Commands::SubscribeTx => args.subscribe_tx().await?,
-        Commands::SubscribeTokenPrice => args.subscribe_token_price().await?,
-        Commands::SubscribeAccount => args.subscribe_account().await?,
+        Commands::SubscribeTx(subscribe_tx_args) => {
+            args.subscribe_tx(subscribe_tx_args.accounts.clone()).await?
+        }
+        Commands::SubscribeTokenPrice(subscribe_token_price_args) => {
+            args.subscribe_token_price(subscribe_token_price_args.account.clone())
+                .await?
+        }
+        Commands::SubscribeAccount(subscribe_account_args) => {
+            args.subscribe_account(subscribe_account_args.account.clone())
+                .await?
+        }
     }
     Ok(())
 }
