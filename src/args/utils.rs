@@ -48,10 +48,19 @@ impl Args {
         client: &mut GeyserGrpcClient<impl Interceptor>,
     ) -> Result<()> {
         let blockhash = client
-            .get_latest_blockhash(Some(CommitmentLevel::Processed))
+            .get_latest_blockhash(Some(self.get_commitment_level()))
             .await?;
         info!("latest_blockhash: {:#?}", blockhash);
         Ok(())
+    }
+    pub fn get_commitment_level(&self) -> CommitmentLevel {
+        if let Some(commitment) =
+            CommitmentLevel::from_str_name(self.commitment_level.to_uppercase().as_str())
+        {
+            commitment
+        } else {
+            CommitmentLevel::Processed
+        }
     }
 }
 

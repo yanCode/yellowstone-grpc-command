@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use anyhow::Result;
 use chrono::Local;
 use futures::sink::SinkExt;
-use log::info;
+use log::{debug, error, info};
 use tokio::sync::mpsc;
 use tokio_stream::StreamExt;
 
@@ -40,7 +40,7 @@ impl Args {
             .await?;
         let (tx, mut rx) = mpsc::channel::<TransactionPretty>(100);
 
-        println!("Subscribed to transactions...");
+        debug!("Subscribed to transactions...");
 
         tokio::spawn(async move {
             while let Some(message) = stream.next().await {
@@ -60,12 +60,12 @@ impl Args {
                         }
                         Some(UpdateOneof::Pong(pong)) => {
                             info!("service is pong: {}", Local::now());
-                            println!("Pong: {:?}", pong);
+                            debug!("Pong: {:?}", pong);
                         }
                         _ => {}
                     }
                 } else {
-                    println!("Error: {:?}", message);
+                    error!("Error: {:?}", message);
                     break;
                 }
             }

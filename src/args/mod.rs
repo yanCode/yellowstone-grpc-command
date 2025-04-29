@@ -1,7 +1,7 @@
 // Add more module declarations here as needed
 
-mod subscribe_tx;
 mod subscribe_token_price;
+mod subscribe_tx;
 mod utils;
 use clap::{Parser, Subcommand};
 
@@ -11,8 +11,8 @@ pub struct Args {
     #[clap(short, long)]
     pub endpoint: Option<String>,
 
-    #[clap(short, long, default_value = "processed")]
-    pub commitment: Option<String>,
+    #[clap(short, long, default_value = "processed", value_parser = ["processed", "confirmed", "finalized"])]
+    pub commitment_level: String,
     #[command(subcommand)]
     pub command: Commands,
 }
@@ -23,5 +23,5 @@ pub enum Commands {
     HealthCheck,
     LatestBlockhash,
     SubscribeTx,
-    SubscribeTokenPrice
+    SubscribeTokenPrice,
 }
