@@ -19,6 +19,7 @@ async fn main() -> Result<()> {
         Commands::LatestBlockhash => args.get_latest_blockhash(&mut client).await?,
         Commands::SubscribeTx => args.subscribe_tx().await?,
         Commands::SubscribeTokenPrice => args.subscribe_token_price().await?,
+        Commands::SubscribeAccount => args.subscribe_account().await?,
     }
     Ok(())
 }

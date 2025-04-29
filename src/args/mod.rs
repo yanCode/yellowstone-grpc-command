@@ -1,5 +1,6 @@
 // Add more module declarations here as needed
 
+mod subscribe_account;
 mod subscribe_token_price;
 mod subscribe_tx;
 mod utils;
@@ -24,4 +25,5 @@ pub enum Commands {
     LatestBlockhash,
     SubscribeTx,
     SubscribeTokenPrice,
+    SubscribeAccount,
 }

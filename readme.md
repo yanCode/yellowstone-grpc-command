@@ -1,6 +1,6 @@
 # Rust command line for Solana gRPC interface
 
-This is a Rust client example for Solana using geyser gRPC.
+This is a Rust client for Solana using geyser gRPC.
 
 ## Unary Commands
    commands that execute then exit after printing response. like `get-version` and `ping`

@@ -1,10 +1,9 @@
 [package]
 
+default-run = "yellowstone-grpc-command"
 edition = "2024"
 name = "yellowstone-grpc-command"
 version = "0.1.0"
-default-run = "yellowstone-grpc-command"
-
 
 [dependencies]
 anyhow = "1.0.97"
@@ -19,6 +18,7 @@ maplit = "1.0.2"
 serde_json = "1.0.105"
 solana-sdk = "2.2.2"
 solana-transaction-status = "2.2.7"
+spl-token = {version = "8.0.0", features = ["no-entrypoint"]}
 tokio = {version = "1.44.2", features = ["rt-multi-thread", "fs"]}
 tokio-stream = "0.1.17"
 yellowstone-grpc-client = "6.0.0"
