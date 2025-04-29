@@ -61,7 +61,9 @@ impl Args {
                             })
                             .await?;
                     }
-                    _ => {}
+                    _ => {
+                        unimplemented!()
+                    }
                 }
             }
             Ok::<(), anyhow::Error>(())

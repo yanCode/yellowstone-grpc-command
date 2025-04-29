@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
-use log::{error, info};
+use futures::SinkExt;
+use log::{debug, error, info};
 use solana_sdk::{program_pack::Pack, pubkey::Pubkey, signature::Signature};
 use tokio_stream::StreamExt;
 use yellowstone_grpc_proto::geyser::{
-    SubscribeRequest, SubscribeRequestFilterAccounts, SubscribeUpdateAccount,
+    SubscribeRequest, SubscribeRequestFilterAccounts, SubscribeRequestPing, SubscribeUpdateAccount,
     subscribe_update::UpdateOneof,
 };
 
@@ -27,7 +28,7 @@ impl Args {
             ..Default::default()
         };
 
-        let (sbuscribe_tx, mut stream) = client
+        let (mut sbuscribe_tx, mut stream) = client
             .subscribe_with_request(Some(subscribe_request))
             .await?;
         while let Some(message) = stream.next().await {
@@ -37,7 +38,13 @@ impl Args {
                         parse_account(&account)?;
                     }
                     Some(UpdateOneof::Ping(ping)) => {
-                        info!("ping: {:?}", ping);
+                        debug!("service is pinging..");
+                        sbuscribe_tx
+                            .send(SubscribeRequest {
+                                ping: Some(SubscribeRequestPing { id: 1 }),
+                                ..Default::default()
+                            })
+                            .await?;
                     }
                     Some(UpdateOneof::Pong(pong)) => {
                         info!("pong: {:?}", pong);
