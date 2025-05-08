@@ -46,5 +46,20 @@ This is a Rust client for Solana using geyser gRPC.
   ```shell
   cargo run subscribe-tx --account 38PgzpJYu2HkiYvV8qePFakB8tuobPdGm2FFEn7Dpump
   ```
+  - ### Mointor a SPL Token Account
   
-
+  ```shell
+  cargo run subscribe-account --account 33SbmqQMhEYtMHMaaJsLxHUuSAa3CgnYWSDdDnGCJAvV
+  ```
+```text
+Account {
+        mint: 38PgzpJYu2HkiYvV8qePFakB8tuobPdGm2FFEn7Dpump,
+        owner: 6ZaWyb9PKP1ZGVsQcE9vjnGPCH6KiWE5XLUY7HdNEJ77,
+        amount: 2092079555,
+        delegate: None,
+        state: Initialized,
+        is_native: None,
+        delegated_amount: 0,
+        close_authority: None,
+    }
+```
