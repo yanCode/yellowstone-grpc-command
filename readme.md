@@ -7,7 +7,7 @@ This is a Rust client for Solana using geyser gRPC.
 
   - ### GetVersion
     ```shell
-    cargo run --bin client  get-version
+    cargo run  get-version
     ```  
     the response would like
     ```json
@@ -26,10 +26,19 @@ This is a Rust client for Solana using geyser gRPC.
       }
     }
     ```
-  - ### Ping
+  - ### Health Check of gRPC server
     ```shell
-      cargo run --bin client  ping -c 18
+      cargo run health-check 
     ```
     ```text
     response: PongResponse { count: 18 }
     ```  
+   - ### Monitor the price of the Token in Raydium
+   ```shell
+   cargo run subscribe-token-price --account 8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj 
+   ```
+   ```text
+   [2025-05-08T08:52:11Z INFO  yellowstone_grpc_command::args::subscribe_token_price] WSOL Price: 152.86149380610254
+   [2025-05-08T08:52:12Z INFO  yellowstone_grpc_command::args::subscribe_token_price] WSOL Price: 152.86240002125396
+   [2025-05-08T08:52:13Z INFO  yellowstone_grpc_command::args::subscribe_token_price] WSOL Price: 152.86553629657067
+   ```

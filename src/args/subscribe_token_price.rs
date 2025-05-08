@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::args::utils::RAYDIUM_LIQUIDITY;
+
 use super::Args;
 use anyhow::Result;
 use futures::SinkExt;
@@ -19,7 +21,7 @@ impl Args {
                 "client".to_string(),
                 SubscribeRequestFilterAccounts {
                     account: vec![account],
-                    owner: vec!["CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK".to_string()],
+                    owner: vec![RAYDIUM_LIQUIDITY.to_string()],
                     ..Default::default()
                 },
             )]),

@@ -69,3 +69,5 @@ pub fn pretty_print_json(input: &str, prefix: &str) -> Result<()> {
     println!("{}: {}", prefix, serde_json::to_string_pretty(&s)?);
     Ok(())
 }
+pub const RAYDIUM_LIQUIDITY: &str = "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK";
+
