@@ -18,7 +18,7 @@ impl Debug for TransactionPretty {
         struct TxWrap<'a>(&'a EncodedTransactionWithStatusMeta);
         impl<'a> Debug for TxWrap<'a> {
             fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-                let serialized = serde_json::to_string(self.0).unwrap();
+                let serialized = serde_json::to_string_pretty(self.0).unwrap();
                 Display::fmt(&serialized, f)
             }
         }

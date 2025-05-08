@@ -42,3 +42,9 @@ This is a Rust client for Solana using geyser gRPC.
    [2025-05-08T08:52:12Z INFO  yellowstone_grpc_command::args::subscribe_token_price] WSOL Price: 152.86240002125396
    [2025-05-08T08:52:13Z INFO  yellowstone_grpc_command::args::subscribe_token_price] WSOL Price: 152.86553629657067
    ```
+  - ### Mointor Transactions of given accounts
+  ```shell
+  cargo run subscribe-tx --account 38PgzpJYu2HkiYvV8qePFakB8tuobPdGm2FFEn7Dpump
+  ```
+  
+

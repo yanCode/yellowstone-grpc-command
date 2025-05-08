@@ -76,7 +76,7 @@ impl Args {
             Ok::<(), anyhow::Error>(())
         });
         while let Some(event) = rx.recv().await {
-            info!("TransactionPretty: {:?}", event);
+            info!("TransactionPretty: {:#?}", event);
         }
 
         Ok(())
